@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../src/screens/HomeScreen';
+import LaunchDetailScreen from '../src/screens/LaunchDetailScreen';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -13,6 +14,7 @@ const Navigation = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="TabStack" component={TabStack} />
+        <Stack.Screen name="LaunchDetail" component={LaunchDetailScreen} />
 
       </Stack.Navigator>
     );
