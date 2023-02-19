@@ -6,7 +6,11 @@ import LaunchCard from '../components/LaunchCard';
 import moment from 'moment';
 import axios from 'axios';
 
-const HomeScreen = () => {
+interface Props {
+  navigation?: any;
+}
+
+const HomeScreen = (props: Props) => {
   const [date, setDate] = useState({start: moment(), end: moment()});
   const [result, setResult] = useState<any[]>([]);
 
@@ -31,7 +35,10 @@ const HomeScreen = () => {
     console.log('obaa', result);
   }, [date]);
 
-  console.log("yo",result.map((a)=>a.links.youtube_id))
+  console.log(
+    'yo',
+    result.map(a => a.links.youtube_id),
+  );
   return (
     <SafeAreaView style={styles.container}>
       <CustomCalendar
@@ -46,7 +53,12 @@ const HomeScreen = () => {
       <FlatList
         data={result}
         renderItem={({item}) => {
-          return <LaunchCard data={item} />;
+          return (
+            <LaunchCard
+              data={item}
+              onPress={() => props.navigation.navigate('LaunchDetail',{item:item})}
+            />
+          );
         }}
       />
     </SafeAreaView>
