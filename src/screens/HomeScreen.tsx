@@ -5,14 +5,44 @@ import CustomCalendar from '../components/CustomCalendar';
 import LaunchCard from '../components/LaunchCard';
 import moment from 'moment';
 import axios from 'axios';
+import SearchFilter from '../components/SearchFilter';
 
 interface Props {
   navigation?: any;
 }
 
+interface date {
+  start: any;
+  end: any;
+}
+
 const HomeScreen = (props: Props) => {
-  const [date, setDate] = useState({start: moment(), end: moment()});
+  const [date, setDate] = useState<date>({start: moment(), end: moment()});
+  const [launches, setLaunches] = useState<any[]>([]);
   const [result, setResult] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
+
+  const onSearchInLaunches = (text: string) => {
+    if (text) {
+      let temp = launches.filter((item: {name: string}) =>
+        item?.name
+          ?.toLocaleLowerCase('tr')
+          .includes(text.toLocaleLowerCase('tr')),
+      );
+      setResult(temp);
+      setSearch(text);
+    } else {
+      setSearch('');
+      setResult([])
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get('https://api.spacexdata.com/v5/launches')
+      .then((res: any) => setLaunches(res?.data))
+      .catch(err => console.log(err));
+  });
 
   useEffect(() => {
     axios
@@ -31,14 +61,8 @@ const HomeScreen = (props: Props) => {
         },
       })
       .then(res => setResult(res?.data?.docs));
-    console.log('date', date);
-    console.log('obaa', result);
   }, [date]);
 
-  console.log(
-    'yo',
-    result.map(a => a.links.youtube_id),
-  );
   return (
     <SafeAreaView style={styles.container}>
       <CustomCalendar
@@ -47,16 +71,27 @@ const HomeScreen = (props: Props) => {
             start: moment(day.dateString).add(3, 'hours').toISOString(),
             end: moment(day.dateString).add(27, 'hours').toISOString(),
           });
-          console.log(date);
         }}
+      />
+      <SearchFilter
+        placeholder="Type a launch name"
+        defaultValue={search}
+        onChangeText={(text: string) => onSearchInLaunches(text)}
       />
       <FlatList
         data={result}
+        ListHeaderComponent={
+            <View style={{paddingHorizontal:16}}>
+                <Text style={{fontSize:16,fontWeight:'600',marginBottom:20,marginTop:30}}>Results</Text>
+            </View>
+        }
         renderItem={({item}) => {
           return (
             <LaunchCard
               data={item}
-              onPress={() => props.navigation.navigate('LaunchDetail',{item:item})}
+              onPress={() =>
+                props.navigation.navigate('LaunchDetail', {item: item})
+              }
             />
           );
         }}
