@@ -13,20 +13,14 @@ const Navigation = () => {
   const MainStack = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="TabStack" component={TabStack} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="LaunchDetail" component={LaunchDetailScreen} />
 
       </Stack.Navigator>
     );
   };
 
-  const TabStack = () => {
-    return (
-      <Tab.Navigator screenOptions={{headerShown:false}}>
-        <Tab.Screen name="Home" component={HomeScreen} />
-      </Tab.Navigator>
-    );
-  };
+
   return (
     <NavigationContainer>
       <MainStack />
