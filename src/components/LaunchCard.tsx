@@ -1,5 +1,6 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
+import { Colors } from '../resources/Colors';
 
 interface Props {
   data: {
@@ -21,14 +22,16 @@ export default LaunchCard;
 
 const styles = StyleSheet.create({
   container: {
-    borderColor:'#E4E7EC',
+    borderColor:Colors.primaryBorderGray,
+    backgroundColor:Colors.white,
     borderWidth:1,
     minHeight:100,
-    margin:10,
+    marginHorizontal:22,
+    marginVertical:10,
     paddingHorizontal:10,
     paddingVertical:8,
     borderRadius:8,
-    shadowOffset: {width: 0.5, height: 2},  
+    shadowOffset: {width: 0.5, height: 1},  
     shadowColor: '#171717',  
     shadowOpacity: 0.2,  
     shadowRadius: 3, 
@@ -42,6 +45,6 @@ const styles = StyleSheet.create({
   details:{
     paddingHorizontal:15,
     paddingVertical:8,
-    color:'#667085'
+    color:Colors.secondarGray
   }
 });
