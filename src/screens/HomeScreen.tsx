@@ -6,6 +6,9 @@ import LaunchCard from '../components/LaunchCard';
 import moment from 'moment';
 import axios from 'axios';
 import SearchFilter from '../components/SearchFilter';
+import {useIsFocused} from '@react-navigation/native';
+import {end_points} from '../end_points';
+import {Colors} from '../resources/Colors';
 
 interface Props {
   navigation?: any;
@@ -19,7 +22,7 @@ interface date {
 const HomeScreen = (props: Props) => {
   const [date, setDate] = useState<date>({start: moment(), end: moment()});
   const [launches, setLaunches] = useState<any[]>([]);
-  const [result, setResult] = useState<any[]>([]);
+  const [result, setResult] = useState<any[]>(launches);
   const [search, setSearch] = useState('');
 
   const onSearchInLaunches = (text: string) => {
@@ -33,20 +36,20 @@ const HomeScreen = (props: Props) => {
       setSearch(text);
     } else {
       setSearch('');
-      setResult([])
+      setResult(launches);
     }
   };
 
   useEffect(() => {
     axios
-      .get('https://api.spacexdata.com/v5/launches')
+      .get(end_points.getAllLaunches)
       .then((res: any) => setLaunches(res?.data))
       .catch(err => console.log(err));
-  });
+  }, []);
 
   useEffect(() => {
     axios
-      .post('https://api.spacexdata.com/v5/launches/query', {
+      .post(end_points.getLaunchesByQuery, {
         query: {
           date_utc: {
             $gte: date.start,
@@ -66,25 +69,29 @@ const HomeScreen = (props: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       <CustomCalendar
-        onDayPress={(day: any) => {
+        onDayPress={(date: any) => {
           setDate({
-            start: moment(day.dateString).add(3, 'hours').toISOString(),
-            end: moment(day.dateString).add(27, 'hours').toISOString(),
+            start: moment(date?.dateString).add(3, 'hours').toISOString(),
+            end: moment(date.dateString).add(27, 'hours').toISOString(),
           });
         }}
+        launches={launches}
       />
+      <View style={styles.line} />
+
       <SearchFilter
-        placeholder="Type a launch name"
+        placeholder="Type a launch.."
         defaultValue={search}
         onChangeText={(text: string) => onSearchInLaunches(text)}
       />
+      <View style={{paddingHorizontal: 16}}>
+        <Text
+          style={styles.resultText}>
+          Results
+        </Text>
+      </View>
       <FlatList
         data={result}
-        ListHeaderComponent={
-            <View style={{paddingHorizontal:16}}>
-                <Text style={{fontSize:16,fontWeight:'600',marginBottom:20,marginTop:30}}>Results</Text>
-            </View>
-        }
         renderItem={({item}) => {
           return (
             <LaunchCard
@@ -107,4 +114,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  line: {
+    borderWidth: 0.75,
+    marginHorizontal: 20,
+    marginVertical: 20,
+    borderColor: Colors.primaryBlue,
+  },
+  resultText:{
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 10,
+    marginTop: 30,
+    color: Colors.primaryBlue,
+  }
 });
